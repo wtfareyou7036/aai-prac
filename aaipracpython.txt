@@ -1,0 +1,686 @@
+###py -m pip install aiml scikit-learn matplotlib pandas numpy fuzzywuzzy
+
+# ============================================================
+# PRACTICAL 1: DESIGN AN EXPERT SYSTEM USING AIML
+# ============================================================
+
+import aiml
+
+def main():
+
+    print("Name: Vandana Narang")
+    print("Roll No: 26K4RIT005")
+
+    kernel = aiml.Kernel()
+    kernel.learn("flu.aiml")
+
+    print("Welcome to the flu diag center")
+
+    while True:
+
+        user_input = input("You: ").strip().upper()
+
+        if user_input == "EXIT":
+
+            print("Goodbye!")
+            print("Name: Vandana Narang")
+            print("Roll No: 26K4RIT005")
+
+            break
+
+        response = kernel.respond(user_input)
+        print("Expert System: " + response)
+
+
+if __name__ == "__main__":
+    main()
+
+flu.aiml
+<aiml> 
+  <category> 
+    <pattern>WELCOME</pattern> 
+    <template>Welcome to the flu diag center. Please enter your symptoms.</template> 
+  </category> 
+  <category> 
+    <pattern>FEVER</pattern> 
+    <template>No flu.</template> 
+  </category> 
+  <category> 
+    <pattern>COUGH</pattern> 
+    <template>No flu.</template> 
+  </category> 
+  <category> 
+    <pattern>FEVER COUGH</pattern> 
+    <template>You may have the flu.</template> 
+  </category> 
+</aiml>
+
+
+
+# ============================================================
+# PRACTICAL 2: LINEAR REGRESSION
+# ============================================================
+
+print("Vandana Narang 26K4RIT005")
+
+import random
+from sklearn.linear_model import LinearRegression
+
+feature_set = []
+target_set = []
+
+number_of_rows = 200
+limit = 2000
+
+for i in range(number_of_rows):
+
+    x = random.randint(0, limit)
+    y = random.randint(0, limit)
+    z = random.randint(0, limit)
+
+    g = 10 * x + 2 * y + 3 * z
+
+    print(i, "x =", x, "y =", y, "z =", z, "g =", g)
+
+    feature_set.append([x, y, z])
+    target_set.append(g)
+
+model = LinearRegression()
+model.fit(feature_set, target_set)
+
+test_data = [[1, 2, 3]]
+prediction = model.predict(test_data)
+
+print("\nPrediction:", prediction)
+print("Coefficients:", model.coef_)
+print("Intercept:", model.intercept_)
+
+print("Vandana Narang 26K4RIT005")
+
+
+# ============================================================
+# PRACTICAL 3: K-MEANS CLUSTERING
+# ============================================================
+
+import matplotlib.pyplot as plt
+from sklearn.cluster import KMeans
+
+print("Vandana Narang 26K4RIT005")
+
+x = [4, 5, 10, 4, 3, 11]
+y = [21, 19, 24, 17, 16, 25]
+
+print("x =", x)
+print("y =", y)
+
+data = list(zip(x, y))
+print("Data Points:", data)
+
+plt.scatter(x, y)
+plt.title("name and roll call")
+plt.xlabel("X")
+plt.ylabel("Y")
+plt.show()
+
+model = KMeans(n_clusters=2, random_state=42)
+model.fit(data)
+
+print("Cluster Labels:", model.labels_)
+print("Cluster Centers:")
+print(model.cluster_centers_)
+
+print("Vandana Narang 26K4RIT005")
+
+plt.scatter(x, y, c=model.labels_, cmap='viridis')
+
+centers = model.cluster_centers_
+
+plt.scatter(
+    centers[:, 0],
+    centers[:, 1],
+    marker='X',
+    s=200,
+    color='red',
+    label='Centroids'
+)
+
+plt.title("K-Means Clustering")
+plt.xlabel("X")
+plt.ylabel("Y")
+plt.legend()
+plt.show()
+
+
+# ============================================================
+# PRACTICAL 4: SVM CLASSIFICATION
+# ============================================================
+
+import pandas as pd
+
+print("Vandana Narang 26K4RIT005")
+
+iris = pd.read_csv("iris.csv")
+data = pd.DataFrame(iris)
+
+print(data)
+
+x = data.drop("species", axis=1)
+y = data["species"]
+
+print("Feature Set")
+print(x)
+
+print("Target Set")
+print(y)
+
+from sklearn.model_selection import train_test_split
+
+x_train, x_test, y_train, y_test = train_test_split(
+    x, y, test_size=0.2, random_state=50
+)
+
+print("=====================================================")
+print("X Train")
+print(x_train)
+
+print("=====================================================")
+print("X Test")
+print(x_test)
+
+print("=====================================================")
+print("Y Train")
+print(y_train)
+
+print("=====================================================")
+print("Y Test")
+print(y_test)
+
+from sklearn.svm import SVC
+
+model = SVC(kernel='linear')
+model.fit(x_train, y_train)
+
+prediction = model.predict(x_test)
+
+print("=====================================================")
+print("Predicted Values")
+print(prediction)
+
+from sklearn.metrics import accuracy_score
+
+print("=====================================================")
+print("Accuracy of the Model")
+
+accuracy = accuracy_score(y_test, prediction)
+print(accuracy)
+
+from sklearn.metrics import confusion_matrix
+
+print("=====================================================")
+print("Confusion Matrix")
+
+cm = confusion_matrix(y_test, prediction)
+print(cm)
+
+print("Vandana Narang 26K4RIT005")
+
+
+# ============================================================
+# PRACTICAL 5: MEMBERSHIP OPERATORS IN CRISP LOGIC
+# ============================================================
+
+a = 10
+b = 10
+
+list = [1, 2, 3, 4, 5]
+
+print("Vandana Narang 26K4RIT005")
+
+if a in list:
+    print("Line 1 -a is available in the given list")
+else:
+    print("Line 1 - a is not available in the given list")
+
+if b not in list:
+    print("Line 2 - b is not available in the given list")
+else:
+    print("line 2 - b is available in the given list")
+
+a = 2
+
+if a in list:
+    print("Line 3 - a is available in the given list")
+else:
+    print("line 3 - a is not available in the given list")
+
+print("Vandana Narang 26K4RIT005")
+
+
+# ============================================================
+# PRACTICAL 6: CRISP AND FUZZY MEMBERSHIP
+# ============================================================
+
+temperature = 40
+
+# PART 1: CRISP MEMBERSHIP
+
+print("Vandana Narang 26K4RIT005")
+print("CRISP MEMBERSHIP")
+
+temperature_set = [20, 25, 30, 35, 40]
+
+if temperature in temperature_set:
+    crisp_output = 1
+else:
+    crisp_output = 0
+
+print("Temperature =", temperature, "°C")
+print("Crisp Membership =", crisp_output)
+
+
+# PART 2: FUZZY MEMBERSHIP
+
+print("FUZZY MEMBERSHIP")
+
+def hot_membership(temp):
+
+    if temp <= 25:
+        return 0
+
+    elif temp >= 40:
+        return 1
+
+    else:
+        return (temp - 25) / (40 - 25)
+
+
+fuzzy_output = hot_membership(temperature)
+
+print("Temperature =", temperature, "°C")
+print("Fuzzy Membership in HOT =", round(fuzzy_output, 2))
+
+print("Vandana Narang 26K4RIT005")
+
+
+# ============================================================
+# PRACTICAL 7: FIND RATIOS USING FUZZY LOGIC
+# ============================================================
+
+from fuzzywuzzy import fuzz
+from fuzzywuzzy import process
+
+s1 = "I love learning Python programming"
+s2 = "Python programming is my favourite subject"
+
+print("Vandana Narang 26K4RIT005")
+
+print("String 1:", s1)
+print("String 2:", s2)
+
+print("FuzzyWuzzy Ratio:", fuzz.ratio(s1, s2))
+
+print("FuzzyWuzzy Partial Ratio:",
+      fuzz.partial_ratio(s1, s2))
+
+print("FuzzyWuzzy Token Sort Ratio:",
+      fuzz.token_sort_ratio(s1, s2))
+
+print("FuzzyWuzzy Token Set Ratio:",
+      fuzz.token_set_ratio(s1, s2))
+
+print("FuzzyWuzzy WRatio:",
+      fuzz.WRatio(s1, s2))
+
+print("Vandana Narang 26K4RIT005")
+
+
+# ============================================================
+# PRACTICAL 8A: BINARY AND BIPOLAR ACTIVATION
+# ============================================================
+
+print("Vandana Narang 26K4RIT005")
+
+print("Input x = ")
+x = float(input())
+
+print("Weight w = ")
+w = float(input())
+
+print("Bias b = ")
+b = float(input())
+
+yin = b + (x * w)
+
+if yin >= 0:
+    y1 = 1
+else:
+    y1 = 0
+
+if yin >= 0:
+    y2 = 1
+else:
+    y2 = -1
+
+print("Input x =", x)
+print("Weight w =", w)
+print("Bias b =", b)
+
+print("Net Input yin =", yin)
+
+print("Binary Activation Output y1 =", y1)
+
+print("Bipolar Activation Output y2 =", y2)
+
+print("Vandana Narang 26K4RIT005")
+
+
+# ============================================================
+# PRACTICAL 8B: CALCULATE NET INPUT WITH BIAS
+# ============================================================
+
+print("Vandana Narang 26K4RIT005")
+
+print("Input x1 = ")
+x1 = float(input())
+
+print("Input x2 = ")
+x2 = float(input())
+
+print("Weight w1 = ")
+w1 = float(input())
+
+print("Weight w2 = ")
+w2 = float(input())
+
+print("Bias b = ")
+b = float(input())
+
+yin = b + (x1 * w1 + x2 * w2)
+
+print("Input nodes x1 and x2 =", x1, x2)
+print("Weight =", w1, w2)
+print("Bias b =", b)
+
+print("Net Input (yin) =", yin)
+
+print("Vandana Narang 26K4RIT005")
+
+
+# ============================================================
+# PRACTICAL 9: BINARY AND BIPOLAR SIGMOIDAL ACTIVATION
+# ============================================================
+
+import numpy as np
+
+print("Vandana Narang 26K4RIT005")
+
+n = int(input("Enter number of elements : "))
+
+print("Enter the inputs")
+inputs = []
+
+for i in range(0, n):
+
+    ele = float(input())
+    inputs.append(ele)
+
+print(inputs)
+
+print("Enter the weights")
+weights = []
+
+for i in range(0, n):
+
+    ele = float(input())
+    weights.append(ele)
+
+print(weights)
+
+print("The net input can be calculated as yin = x1w1 + x2w2 + x3w3")
+
+yin = []
+
+for i in range(0, n):
+
+    yin.append(inputs[i] * weights[i])
+    x = round(sum(yin), 3)
+
+print(x)
+
+y1 = 1 / (1 + np.exp(-x))
+
+y2 = (1 - np.exp(-x)) / (1 + np.exp(-x))
+
+print("Output using binary sigmoidal function: ", y1)
+
+print("Output using bipolar sigmoidal function:", y2)
+
+print("Vandana Narang 26K4RIT005")
+
+
+# ============================================================
+# PRACTICAL 10: MCCULLOCH-PITTS NEURON (AND AND OR)
+# ============================================================
+
+print("Vandana Narang 26K4RIT005")
+
+inputs = [
+    [0, 0],
+    [0, 1],
+    [1, 0],
+    [1, 1]
+]
+
+weights = [1, 1]
+threshold = 2
+
+print("AND Gate using McCulloch-Pitts Neuron")
+print("--------------------------------------")
+
+for x in inputs:
+
+    weighted_sum = (x[0] * weights[0]) + (x[1] * weights[1])
+
+    if weighted_sum >= threshold:
+        output = 1
+    else:
+        output = 0
+
+    print("Input:", x,
+          " Weighted Sum:", weighted_sum,
+          " Output:", output)
+
+
+inputs = [
+    [0, 0],
+    [0, 1],
+    [1, 0],
+    [1, 1]
+]
+
+weights = [1, 1]
+threshold = 1
+
+print("OR Gate using McCulloch-Pitts Neuron")
+print("-------------------------------------")
+
+for x in inputs:
+
+    weighted_sum = (x[0] * weights[0]) + (x[1] * weights[1])
+
+    if weighted_sum >= threshold:
+        output = 1
+    else:
+        output = 0
+
+    print("Input:", x,
+          " Weighted Sum:", weighted_sum,
+          " Output:", output)
+
+print("Vandana Narang 26K4RIT005")
+
+
+# ============================================================
+# PRACTICAL 11: HEBB RULE (AND FUNCTION)
+# ============================================================
+
+x1 = []
+x2 = []
+
+y = [1, -1, -1, -1]
+
+print("Vandana Narang 26K4RIT005")
+
+print("\nEnter Bipolar X1 Input = ")
+
+for i in range(0, 4):
+
+    e1 = float(input())
+    x1.append(e1)
+
+print("Bipolar X1 Inputs Are: ", x1)
+
+print("Enter Bipolar X2 Input = ")
+
+for i in range(0, 4):
+
+    e2 = float(input())
+    x2.append(e2)
+
+print("Bipolar X2 Inputs Are: ", x2)
+
+print("Target y AND = ", y)
+
+w1 = 0
+w2 = 0
+b = 0
+
+for i in range(0, 4):
+
+    w1 = w1 + x1[i] * y[i]
+    w2 = w2 + x2[i] * y[i]
+    b = b + y[i]
+
+print("w1 = ", w1)
+print("w2 = ", w2)
+print("b = ", b)
+
+print("Vandana Narang 26K4RIT005")
+
+
+# ============================================================
+# PRACTICAL 11b: HEBB RULE (ANDNOT FUNCTION)
+# ============================================================
+
+x1 = []
+x2 = []
+
+y = [-1, 1, -1, -1]
+
+print("Vandana Narang 26K4RIT005")
+
+print("\nEnter Bipolar X1 Input = ")
+
+for i in range(0, 4):
+
+    e1 = float(input())
+    x1.append(e1)
+
+print("Bipolar X1 Inputs Are: ", x1)
+
+print("Enter Bipolar X2 Input = ")
+
+for i in range(0, 4):
+
+    e2 = float(input())
+    x2.append(e2)
+
+print("Bipolar X2 Inputs Are: ", x2)
+
+print("Target y ANDNOT = ", y)
+
+w1 = 0
+w2 = 0
+b = 0
+
+for i in range(0, 4):
+
+    w1 = w1 + x1[i] * y[i]
+    w2 = w2 + x2[i] * y[i]
+    b = b + y[i]
+
+print("w1 = ", w1)
+print("w2 = ", w2)
+print("b = ", b)
+
+print("Vandana Narang 26K4RIT005")
+
+
+# ============================================================
+# PRACTICAL 12: JOINT AND CONDITIONAL PROBABILITY
+# ============================================================
+
+print("Vandana Narang 26K4RIT005")
+
+def conditional():
+
+    pass_stats = 0.15
+    pass_codingWStats = 0.60
+    pass_codingWOStats = 0.40
+
+    # Probability of passing both Statistics and Coding
+
+    prob_both = pass_stats * pass_codingWStats
+
+    print("The probability that applicant passes both is",
+          round(prob_both, 3))
+
+    # Probability of passing Coding
+
+    prob_coding = prob_both + ((1 - pass_stats) * pass_codingWOStats)
+
+    print("The probability that he/she passes Coding is",
+          round(prob_coding, 3))
+
+    # Conditional probability: P(Statistics | Coding)
+
+    stats_given_coding = prob_both / prob_coding
+
+    print("Conditional probability is",
+          round(stats_given_coding, 3))
+
+    print("Vandana Narang 26K4RIT005")
+
+
+conditional()
+
+
+# ============================================================
+# PRACTICAL 13: BAYES THEOREM
+# ============================================================
+
+print("Vandana Narang 26K4RIT005")
+
+def bayes_theorem(prior_prob, likelihood, evidence):
+
+    posterior_prob = (likelihood * prior_prob) / evidence
+
+    return posterior_prob
+
+
+if __name__ == "__main__":
+
+    prior_prob = float(input("Enter prior probability: "))
+
+    likelihood = float(input("Enter likelihood: "))
+
+    evidence = float(input("Enter evidence: "))
+
+    posterior_prob = bayes_theorem(
+        prior_prob, likelihood, evidence
+    )
+
+    print("Posterior Probability:", posterior_prob)
+
+
+print("Vandana Narang 26K4RIT005")
