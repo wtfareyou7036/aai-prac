@@ -1,0 +1,548 @@
+#P1
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+df=pd.read_csv('p1vandana.csv')
+print(df)
+print(df.shape)
+print(df.info())
+print(df.describe())
+print(df.isnull().sum())
+
+numeric_columns=["Age","Study_Hours","Attendance","Previous_Score","Final_Score"]
+for columns in numeric_columns:
+    df[columns]=df[columns].fillna(df[columns].median())
+print(df.isnull().sum())    
+print(df.duplicated().sum()) 
+df=df.drop_duplicates()
+print(df.shape)
+
+numeric_columns1=["Age","Study_Hours","Attendance","Previous_Score","Final_Score"]
+for columns in numeric_columns1:
+    q1=df[columns].quantile(0.25)
+    q3=df[columns].quantile(0.75)
+    iqr=q3-q1
+    lower_bound=q1-1.5*iqr
+    upper_bound=q3+1.5*iqr
+    outlier=df[(df[columns]<lower_bound)|(df[columns]>upper_bound)]
+    print("Columns",columns)
+    print("Q1",q1)
+    print("Q3",q3)
+    print("IQR",iqr)
+    print("Lower Bound",lower_bound)
+    print("Upper Bound",upper_bound)
+q1=df['Study_Hours'].quantile(0.25)
+q3=df['Study_Hours'].quantile(0.75)
+iqr=q3-q1
+lower_bound=q1-1.5*iqr
+upper_bound=q3+1.5*iqr
+df=df[(df['Study_Hours']>=lower_bound)&(df['Study_Hours']<=upper_bound)]
+print(df)
+print(df.shape)
+print(df.isnull().sum())
+print(df.duplicated().sum())
+
+df.to_csv('student_performance_clean.csv',index=False)
+print("Dataset cleaned successfully")
+
+#P2
+import pandas as pd
+import plotly.express as px
+
+df = px.data.iris()
+print(df.head())  # Print the first 5 records
+print(df.tail())  # Print the last 5 records
+print(df.shape)   # Display the number of rows and columns
+
+
+fig_1 = px.histogram(df,x="sepal_length",color="species",nbins=15,title="Distribution of Sepal Length")
+fig_1.show()
+
+
+fig_2 = px.scatter(df,x="petal_length",y="petal_width",hover_data=["sepal_length", "sepal_width"],title="Petal Length vs Petal Width")
+fig_2.show()
+
+
+corr = df[ ["sepal_length", "sepal_width", "petal_length", "petal_width"] ].corr()
+print(corr)
+
+
+fig_3 = px.imshow(corr,text_auto=".2f",color_continuous_scale="RdBu_r",title="Correlation Heatmap")
+fig_3.show()
+
+
+fig_4 = px.scatter_matrix(df, dimensions=["sepal_length","sepal_width","petal_length","petal_width"],color="species",title="Iris Feature Relationships")
+fig_4.show()
+
+mean_data = df.groupby("species",as_index=False)[["sepal_length", "sepal_width", "petal_length", "petal_width"]].mean()
+fig_5 = px.bar(mean_data,x="species",y="petal_length",color="species",title="Average Petal Length by Species",text_auto=".2f")
+fig_5.show()
+
+# P3 - HYPOTHESIS TESTING
+HYPOTHESIS prac 3
+import pandas as pd
+import numpy as np
+from scipy.stats import ttest_ind
+df = pd.read_csv("students_data.csv")
+print(df)
+ai_scores = df[df["Study_Method"] == "AI_Module"]["Final_Score"]
+traditional_scores = df[df["Study_Method"] == "Traditional"]["Final_Score"]
+mean_ai = np.mean(ai_scores)
+mean_traditional = np.mean(traditional_scores)
+print("AI Module Mean Score:", mean_ai)
+print("Traditional Mean Score:", mean_traditional)
+print("Mean Difference:", mean_ai - mean_traditional)
+t_stat, p_value_two_tailed = ttest_ind(
+    ai_scores,
+    traditional_scores,
+)
+if t_stat > 0:
+    p_value_one_tailed = p_value_two_tailed / 2
+else:
+    p_value_one_tailed = 1 - (p_value_two_tailed / 2)
+print("\nHypothesis Test")
+print("t-statistic:", t_stat)
+print("One-tailed p-value:", p_value_one_tailed)
+alpha = 0.05
+if p_value_one_tailed < alpha:
+    print("Decision: Reject H0")
+    print(
+        "Conclusion: Students using the AI Module score significantly higher than students using traditional study materials."
+    )
+else:
+    print("\nDecision: Fail to reject H0")
+    print("Conclusion: There is insufficient evidence that the AI Module produces higher scores."
+    )
+
+# P4 - LINEAR REGRESSION
+Linear Regression prac 4
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error, r2_score
+df = pd.read_csv("house_data.csv")
+print(df)
+X = df[
+    [
+        "Square_Feet",
+        "Bedroom_Count",
+        "Property_Age",
+        "Distance_To_City_Center"
+    ]
+]
+y = df["Listing_Price"]
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.20, random_state=42
+)
+model = LinearRegression()
+model.fit(X_train, y_train)
+print("Coefficient: ",model.coef_[0])
+print("Intercept:", model.intercept_)
+y_pred = model.predict(X_test)
+print("Actual Prices: ")
+print(y_test.values)
+print("\n Predicted Prices: ")
+print(y_pred)
+results = pd.DataFrame({
+    "Actual Price": y_test.values,
+    "Predicted Price": y_pred
+})
+print("\nActual vs Predicted Prices:")
+print(results.round(2))
+mse = mean_squared_error(y_test, y_pred)
+print("MSE: ",mse)
+rmse = np.sqrt(mse)
+print("RMSE: ",rmse)
+r2 = r2_score(y_test, y_pred)
+print("R2 score: ",r2)
+plt.scatter(y_test, y_pred)
+plt.xlabel("Actual Price (₹ lakh)")
+plt.ylabel("Predicted Price (₹ lakh)")
+plt.title("Actual vs Predicted House Prices")
+plt.show()
+
+# P5 - K-MEANS CLUSTERING
+Kmeans Clustering prac 5
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.cluster import KMeans
+from sklearn.preprocessing import StandardScaler
+data = {
+    "Customer_ID": [
+        "C1", "C2", "C3", "C4", "C5",
+        "C6", "C7", "C8", "C9", "C10",
+        "C11", "C12", "C13", "C14", "C15",
+        "C16", "C17", "C18", "C19", "C20",
+        "C21", "C22", "C23", "C24", "C25"
+    ],
+    "Annual_Income_k": [
+        25, 30, 28, 35, 32,
+        80, 85, 78, 90, 82,
+        45, 50, 48, 55, 52,
+        100, 110, 95, 105, 115,
+        40, 42, 88, 92, 60
+    ],
+    "Annual_Visits": [
+        10, 12, 9, 11, 13,
+        40, 38, 42, 35, 39,
+        25, 28, 23, 30, 27,
+        15, 18, 16, 20, 17,
+        32, 29, 12, 14, 26
+    ],
+    "Avg_Spend_Per_Visit": [
+        500, 550, 480, 600, 520,
+        1500, 1600, 1450, 1700, 1550,
+        900, 950, 850, 1000, 920,
+        1800, 2000, 1750, 1900, 2100,
+        800, 820, 1650, 1700, 1100
+    ]
+}
+df = pd.DataFrame(data)
+print(df)
+print("\nMissing Values:")
+print(df.isnull().sum())
+X = df[
+    ["Annual_Income_k", "Annual_Visits"]
+]
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+inertia = []
+K_range = range(1, 11)
+for k in K_range:
+    kmeans = KMeans(
+        n_clusters=k,
+        random_state=42,
+        n_init=10
+    )
+    kmeans.fit(X_scaled)
+    inertia.append(kmeans.inertia_)
+plt.figure(figsize=(8, 5))
+plt.plot(
+    K_range,
+    inertia,
+    marker="o"
+)
+plt.xlabel("Number of Clusters (K)")
+plt.ylabel("Inertia")
+plt.title("Elbow Method - Customer Segmentation")
+plt.xticks(K_range)
+plt.show()
+kmeans = KMeans(
+    n_clusters=4,
+    random_state=42,
+    n_init=10
+)
+df["Cluster"] = kmeans.fit_predict(X_scaled)
+print("\nCustomer Cluster Assignment:")
+print(df)
+centers_scaled = kmeans.cluster_centers_
+centers = scaler.inverse_transform(
+    centers_scaled
+)
+cluster_centers = pd.DataFrame(
+    centers,
+    columns=[
+        "Annual_Income_k",
+        "Annual_Visits"
+    ]
+)
+print("\nCluster Centers:")
+print(cluster_centers.round(2))
+print("\nCustomers in Each Cluster:")
+print(
+    df["Cluster"].value_counts().sort_index()
+)
+print("\nAverage Spending Per Visit by Cluster:")
+print(
+    df.groupby("Cluster")[
+        "Avg_Spend_Per_Visit"
+    ].mean().round(2)
+)
+plt.figure(figsize=(9, 6))
+plt.scatter(
+    df["Annual_Income_k"],
+    df["Annual_Visits"],
+    c=df["Cluster"],
+    s=100
+)
+plt.scatter(
+    cluster_centers["Annual_Income_k"],
+    cluster_centers["Annual_Visits"],
+    marker="X",
+    s=250,
+    label="Cluster Centers"
+)
+plt.xlabel("Annual Income (₹'000)")
+plt.ylabel("Annual Store Visits")
+plt.title(
+    "Customer Segmentation Using K-Means"
+)
+plt.legend()
+plt.show()
+
+# P6 - DECISION TREE
+decision tree prac 6
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.tree import plot_tree
+from sklearn.metrics import (
+    confusion_matrix,
+    ConfusionMatrixDisplay,
+    accuracy_score,
+    precision_score,
+    recall_score
+)
+data = {
+    "Applicant_ID": [
+        "A1", "A2", "A3", "A4", "A5",
+        "A6", "A7", "A8", "A9", "A10",
+        "A11", "A12", "A13", "A14", "A15",
+        "A16", "A17", "A18", "A19", "A20",
+        "A21", "A22", "A23", "A24", "A25",
+        "A26", "A27", "A28", "A29", "A30"
+    ],
+    "Credit_Score": [
+        750, 580, 720, 550, 800,
+        620, 700, 590, 780, 680,
+        560, 740, 640, 770, 600,
+        730, 610, 790, 570, 710,
+        760, 630, 690, 540, 820,
+        650, 720, 585, 775, 705
+    ],
+    "Annual_Income_k": [
+        80, 30, 75, 25, 100,
+        40, 70, 35, 95, 55,
+        28, 85, 50, 90, 38,
+        78, 42, 105, 32, 65,
+        88, 45, 60, 22, 110,
+        52, 82, 33, 92, 68
+    ],
+    "Debt_To_Income": [
+        20, 45, 25, 55, 15,
+        40, 28, 50, 18, 30,
+        60, 22, 42, 17, 48,
+        24, 38, 12, 58, 26,
+        19, 44, 32, 65, 10,
+        35, 21, 52, 16, 29
+    ],
+    "Employment_Years": [
+        8, 2, 7, 1, 12,
+        3, 6, 2, 10, 5,
+        1, 9, 4, 11, 2,
+        8, 3, 13, 1, 6,
+        10, 4, 5, 1, 15,
+        4, 9, 2, 12, 7
+    ],
+    "Approved": [
+        1, 0, 1, 0, 1,
+        0, 1, 0, 1, 1,
+        0, 1, 0, 1, 0,
+        1, 0, 1, 0, 1,
+        1, 0, 1, 0, 1,
+        0, 1, 0, 1, 1
+    ]
+}
+df = pd.DataFrame(data)
+print(df)
+X = df[
+    [
+        "Credit_Score",
+        "Annual_Income_k",
+        "Debt_To_Income",
+        "Employment_Years"
+    ]
+]
+y = df["Approved"]
+X_train, X_test, y_train, y_test = train_test_split(
+    X,
+    y,
+    test_size=0.30,
+    random_state=42,
+    stratify=y
+)
+model = DecisionTreeClassifier(
+    max_depth=3,
+    random_state=42
+)
+model.fit(X_train, y_train)
+y_pred = model.predict(X_test)
+print("\nActual Decisions:")
+print(y_test.values)
+print("\nPredicted Decisions:")
+print(y_pred)
+accuracy = accuracy_score(y_test, y_pred)
+precision = precision_score(
+    y_test,
+    y_pred,
+    zero_division=0
+)
+recall = recall_score(
+    y_test,
+    y_pred,
+    zero_division=0
+)
+print("\nModel Performance")
+print("Accuracy :", accuracy)
+print("Precision:", precision)
+print("Recall   :", recall)
+cm = confusion_matrix(y_test,y_pred,)
+print("\nConfusion Matrix:")
+print(cm)
+disp = ConfusionMatrixDisplay(
+    confusion_matrix=cm,
+    display_labels=["Rejected", "Approved"]
+)
+disp.plot()
+plt.title("Confusion Matrix - Loan Approval")
+plt.show()
+plt.figure(figsize=(8, 10))
+plot_tree(
+    model,
+    feature_names=X.columns,
+    class_names=["Rejected", "Approved"],
+    filled=True,
+    rounded=True
+)
+plt.title("Decision Tree - Loan Approval Prediction")
+plt.show()
+
+# P7 - MAPREDUCE
+MapReduce prac 7
+from pyspark.sql import SparkSession
+spark = SparkSession.builder.appName("Practical_1").getOrCreate()
+sales = [
+    ("P101", "2", "500"),
+    ("P102", "3", "200"),
+    ("P101", "4", "500"),
+    ("P103", "5", "100"),
+    ("P102", "2", "200"),
+    ("P103", "3", "100")
+]
+rdd = spark.sparkContext.parallelize(sales)
+pairs = rdd.map(
+    lambda x: (x[0], int(x[1]) * float(x[2]))
+)
+print("Product Transaction Values:")
+print(pairs.collect())
+result = pairs.reduceByKey(lambda a, b: a + b)
+print("\nTotal Revenue Per Product:")
+for product, revenue in sorted(result.collect()):
+    print(product, ":", revenue)
+spark.stop()
+
+# P8 - FILTER, GROUPBY AND AGGREGATION
+prac 8 Filter , groupby, agg
+from pyspark.sql import SparkSession
+from pyspark.sql.functions import col, avg, max
+spark = SparkSession.builder.appName("Practical_2").getOrCreate()
+data = [
+    (1, "Amit", "IT", 50000, 28),
+    (2, "Neha", "HR", 60000, 35),
+    (3, "Rahul", "IT", 70000, 40),
+    (4, "Priya", "Sales", 45000, 32),
+    (5, "Karan", "HR", 55000, 29),
+    (6, "Sneha", "IT", 80000, 36),
+    (7, "Rohan", "Sales", 65000, 42),
+    (8, "Pooja", "HR", 75000, 38)
+]
+cols = ["EmpID", "Name", "Department", "Salary", "Age"]
+df = spark.createDataFrame(data, cols)
+print("Employee Data:")
+df.show()
+filtered_df = df.filter(col("Age") > 30)
+print("Employees Older Than 30:")
+filtered_df.show()
+result = filtered_df.groupBy("Department").agg(
+    avg("Salary").alias("Average_Salary"),
+    max("Salary").alias("Maximum_Salary")
+)
+print("Average and Maximum Salary by Department:")
+result.show()
+spark.stop()
+
+# P9 - SPARK SQL
+prac 9 SQL
+from pyspark.sql import SparkSession
+spark = SparkSession.builder.appName("Practical_3").getOrCreate()
+orders = [
+    (101, 1, "2026-01-10", 30000),
+    (102, 2, "2026-01-12", 25000),
+    (103, 1, "2026-02-05", 25000),
+    (104, 3, "2026-02-10", 40000),
+    (105, 2, "2026-03-01", 30000),
+    (106, 4, "2026-03-05", 60000),
+    (107, 5, "2026-03-12", 20000)
+]
+order_cols = [
+    "OrderID", "CustomerID", "OrderDate", "TotalAmount"
+]
+df_orders = spark.createDataFrame(orders, order_cols)
+customers = [
+    (1, "Amit", "India"),
+    (2, "Neha", "India"),
+    (3, "Rahul", "USA"),
+    (4, "Priya", "India"),
+    (5, "Karan", "India")
+]
+customer_cols = ["CustomerID", "CustomerName", "Country"]
+df_customers = spark.createDataFrame(
+    customers, customer_cols
+)
+print("Orders Data:")
+df_orders.show()
+print("Customers Data:")
+df_customers.show()
+df_orders.createOrReplaceTempView("orders")
+df_customers.createOrReplaceTempView("customers")
+query = """
+SELECT
+    c.CustomerID,
+    c.CustomerName,
+    c.Country,
+    SUM(o.TotalAmount) AS Total_Spending
+FROM orders o
+INNER JOIN customers c
+    ON o.CustomerID = c.CustomerID
+WHERE c.Country = 'India'
+GROUP BY
+    c.CustomerID,
+    c.CustomerName,
+    c.Country
+HAVING SUM(o.TotalAmount) > 50000
+ORDER BY Total_Spending DESC
+"""
+result = spark.sql(query)
+print("Indian Customers Spending More Than 50000:")
+result.show()
+spark.stop()
+
+# P10 - AVERAGE USING RDD
+prac 10 average
+from pyspark.sql import SparkSession
+spark = SparkSession.builder.appName("Practical_4").getOrCreate()
+scores = [
+    ("Alice", 85),
+    ("Bob", 70),
+    ("Alice", 90),
+    ("Bob", 80),
+    ("Charlie", 95)
+]
+rdd = spark.sparkContext.parallelize(scores)
+pairs = rdd.map(
+    lambda x: (x[0], (x[1], 1))
+)
+result = pairs.reduceByKey(
+    lambda a, b: (a[0] + b[0], a[1] + b[1])
+)
+average = result.map(
+    lambda x: (x[0], x[1][0] / x[1][1])
+)
+print("Average Score of Each Student:")
+for name, avg_score in sorted(average.collect()):
+    print(name, ":", avg_score)
+spark.stop()
